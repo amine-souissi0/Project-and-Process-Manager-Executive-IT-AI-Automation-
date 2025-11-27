@@ -53,14 +53,19 @@ def inject_config():
     """Make config available to all templates"""
     return dict(config=Config)
 
+# Initialize directories on import (for Gunicorn)
+init_directories()
+
 if __name__ == '__main__':
-    init_directories()
+    # Get port from environment variable (for cloud deployment) or use default
+    port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
+    debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     print("=" * 70)
     print("Ulink Assist Operations Automation Demo")
     print("=" * 70)
-    print("Server starting on http://127.0.0.1:5000")
-    print("Open your browser to: http://127.0.0.1:5000")
+    print(f"Server starting on http://{host}:{port}")
     print("=" * 70)
     print("\nDemo Login Credentials:")
     print("  Admin:  username=admin, password=admin123")
@@ -68,4 +73,4 @@ if __name__ == '__main__':
     print("  Viewer: username=viewer, password=viewer123")
     print("=" * 70)
     
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=debug, host=host, port=port)
