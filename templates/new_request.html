@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}New Request - Ulink Assist Request Tracker{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1 style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">New Patient Assistance Request</h1>
+        <p style="color: rgba(255,255,255,0.9); margin-bottom: 0;">Submit a new request for medical assistance</p>
+    </div>
+</div>
+
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Request Information</h4>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('main.new_request') }}">
+                    <div class="mb-3">
+                        <label for="patient_name" class="form-label">
+                            Patient Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="patient_name" name="patient_name" 
+                               required placeholder="Enter patient's full name">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="contact_info" class="form-label">
+                            Contact Information <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="contact_info" name="contact_info" 
+                               required placeholder="Email or phone number">
+                        <small class="form-text text-muted">Enter email address or phone number</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="request_type" class="form-label">
+                            {% if translations %}{{ translations.request_type }}{% else %}Request Type{% endif %} <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="request_type" name="request_type" required>
+                            <option value="">Select request type...</option>
+                            <option value="Teleconsultation">{% if translations %}{{ translations.teleconsultation }}{% else %}Teleconsultation{% endif %}</option>
+                            <option value="Hospital Booking">{% if translations %}{{ translations.hospital_booking }}{% else %}Hospital Booking{% endif %}</option>
+                            <option value="Medical Evacuation">{% if translations %}{{ translations.medical_evacuation }}{% else %}Medical Evacuation{% endif %}</option>
+                            <option value="Case Inquiry">{% if translations %}{{ translations.case_inquiry }}{% else %}Case Inquiry{% endif %}</option>
+                            <option value="Claim">{% if translations %}{{ translations.claim }}{% else %}Claim{% endif %}</option>
+                            <option value="Other">{% if translations %}{{ translations.other }}{% else %}Other{% endif %}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">
+                            {% if translations %}{{ translations.priority }}{% else %}Priority Level{% endif %} <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="priority" name="priority" required>
+                            <option value="Low">{% if translations %}{{ translations.low }}{% else %}Low{% endif %}</option>
+                            <option value="Medium" selected>{% if translations %}{{ translations.medium }}{% else %}Medium{% endif %}</option>
+                            <option value="High">{% if translations %}{{ translations.high }}{% else %}High{% endif %}</option>
+                            <option value="Urgent">{% if translations %}{{ translations.urgent }}{% else %}Urgent{% endif %}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            Description / Notes <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="5" required 
+                                  placeholder="Provide detailed information about the assistance request..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="bi bi-info-circle"></i> Information</h6>
+                <p class="text-muted mb-0 small">
+                    Once submitted, your request will be assigned a unique Request ID and logged in the system. 
+                    You can track its status through the dashboard.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+

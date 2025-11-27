@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="{% if lang %}{{ lang }}{% else %}en{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ulink Assist - Request Tracker{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --ulink-blue: #0066cc;
+            --ulink-blue-dark: #0052a3;
+            --ulink-blue-light: #e6f2ff;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        /* Navigation - Ulink Style */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--ulink-blue) !important;
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar-brand:hover {
+            color: var(--ulink-blue-dark) !important;
+        }
+        
+        .navbar-nav .nav-link {
+            color: var(--text-dark) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: var(--ulink-blue) !important;
+        }
+        
+        /* Cards - Clean Ulink Style */
+        .card {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: var(--ulink-blue);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Buttons - Ulink Style */
+        .btn-primary {
+            background-color: var(--ulink-blue);
+            border-color: var(--ulink-blue);
+            color: white;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--ulink-blue-dark);
+            border-color: var(--ulink-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,102,204,0.3);
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--ulink-blue);
+            color: var(--ulink-blue);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--ulink-blue);
+            border-color: var(--ulink-blue);
+        }
+        
+        /* Free Assistance Button Style */
+        .btn-free-assistance {
+            background-color: #28a745;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            border: none;
+        }
+        
+        .btn-free-assistance:hover {
+            background-color: #218838;
+            color: white;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-new { 
+            background-color: #e6f2ff; 
+            color: var(--ulink-blue); 
+            border: 1px solid var(--ulink-blue-light);
+        }
+        .status-in-progress { 
+            background-color: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeaa7;
+        }
+        .status-pending-info { 
+            background-color: #ffe5cc; 
+            color: #cc6600; 
+            border: 1px solid #ffcc99;
+        }
+        .status-completed { 
+            background-color: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb;
+        }
+        .status-closed { 
+            background-color: #e9ecef; 
+            color: #495057; 
+            border: 1px solid #dee2e6;
+        }
+        
+        /* Tables */
+        .table {
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: var(--text-dark);
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Form Elements */
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--ulink-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.15);
+        }
+        
+        /* Footer - Ulink Style */
+        .footer {
+            background-color: #2c3e50;
+            color: #ffffff;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 4px solid var(--ulink-blue);
+        }
+        
+        .footer h5 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .footer a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        /* Hero Section Style */
+        .hero-section {
+            background: linear-gradient(135deg, var(--ulink-blue) 0%, var(--ulink-blue-dark) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        /* Stats Cards */
+        .stats-card {
+            border-left: 4px solid var(--ulink-blue);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        
+        /* Page Headers */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        .bg-primary {
+            background-color: var(--ulink-blue) !important;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            border-radius: 6px;
+            border: none;
+        }
+        
+        /* Container adjustments */
+        .container {
+            max-width: 1200px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation - Ulink Style -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Ulink Assist" height="40" class="me-2">
+                <div>
+                    <strong style="color: var(--ulink-blue);">Ulink Assist</strong>
+                    <span style="color: #6c757d; font-weight: 400; font-size: 0.9rem;">
+                        {% if translations %}{{ translations.request_tracker }}{% else %}Request Tracker{% endif %}
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">
+                            {% if translations %}{{ translations.dashboard }}{% else %}Dashboard{% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.new_request') }}">
+                            {% if translations %}{{ translations.new_request }}{% else %}New Request{% endif %}
+                        </a>
+                    </li>
+                    <!-- Language Switcher -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-globe"></i> 
+                            {% if lang == 'id' %}ID{% else %}EN{% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', lang='en') }}">
+                                <span class="flag-icon">🇺🇸</span> English
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', lang='id') }}">
+                                <span class="flag-icon">🇮🇩</span> Indonesian
+                            </a></li>
+                        </ul>
+                    </li>
+                    <!-- User Menu -->
+                    {% if session.get('username') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> {{ session.get('name', 'User') }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><span class="dropdown-item-text"><small>Role: {{ session.get('role', 'N/A') }}</small></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="bi bi-box-arrow-right"></i> {% if translations %}{{ translations.logout }}{% else %}Logout{% endif %}
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> {% if translations %}{{ translations.login }}{% else %}Login{% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'info' if category == 'info' else 'warning' if category == 'warning' else 'danger' }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{{ 'check-circle' if category == 'success' else 'info-circle' if category == 'info' else 'exclamation-triangle' }}"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Footer - Ulink Style -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5>Ulink Assist</h5>
+                    <p style="color: #bdc3c7; line-height: 1.8;">
+                        With 25+ years of experience, Ulink Assist is the medical assistance provider of choice 
+                        for all your assistance requirements. We go the extra mile to support through emergency 
+                        medical assistance, evacuations, repatriations, and more.
+                    </p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact</h5>
+                    <p style="color: #bdc3c7;">
+                        <i class="bi bi-telephone"></i> +65 6835 0388<br>
+                        <i class="bi bi-envelope"></i> ops@ulinkassist.com
+                    </p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="{{ url_for('main.index') }}">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.new_request') }}">New Request</a></li>
+                        <li><a href="https://www.ulinkassist.com/" target="_blank">Ulink Assist Website</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="border-color: #34495e; margin: 2rem 0 1rem;">
+            <div class="text-center" style="color: #95a5a6;">
+                <p class="mb-0">Medical Assistance Request Tracker - Demo Application</p>
+                <small>Demonstrating IT skills, automation, and process management capabilities</small>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
